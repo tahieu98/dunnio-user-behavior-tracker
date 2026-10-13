@@ -83,7 +83,9 @@ jobs:
         run: |
           VERSION=$(node -p "require('./desktop/macos/package.json').version")
           TAG="v${VERSION}-macos-preview"
+          git archive --format=zip --prefix="DunnioInsights-${VERSION}-source/" --output="packages/DunnioInsights-${VERSION}-macos-source.zip" "$GITHUB_SHA"
+          (cd packages && sha256sum "DunnioInsights-${VERSION}-macos-source.zip" > SOURCE-SHA256.txt)
           if ! gh release view "$TAG" >/dev/null 2>&1; then
             gh release create "$TAG" --target "$GITHUB_SHA" --title "Dunnio Insights ${VERSION} · macOS preview" --prerelease --notes-file desktop/macos/RELEASE-NOTES.md
           fi
-          gh release upload "$TAG" packages/*.dmg packages/*.zip packages/SHA256SUMS-*.txt --clobber
+          gh release upload "$TAG" packages/*.dmg packages/*.zip packages/SHA256SUMS-*.txt packages/SOURCE-SHA256.txt --clobber

@@ -5,3 +5,5 @@ Includes Dunnio Touch, Clarity Workspace, private MySQL and Chromium. Local Admi
 This is a preview with an ad-hoc code signature, without Apple Developer ID/notarization. Gatekeeper may request manual confirmation; managed devices may require a Developer ID release. Windows DPAPI credentials are not included or transferable: configure the Clarity token on your Mac.
 
 Each architecture must pass native build, signature verification and two packaged-app lifecycle smoke runs before the workflow publishes these assets. SHA256SUMS files accompany DMG/ZIP downloads. See desktop/macos/USER-GUIDE.md for installation, data retention and limitations.
+
+The release also provides `DunnioInsights-1.5.0-macos-source.zip` and `SOURCE-SHA256.txt`. This source archive contains the tracked project source, migrations, tests, technical documentation and reproducible build configuration. It excludes dependencies, credentials, databases and user data.

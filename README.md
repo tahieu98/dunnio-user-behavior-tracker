@@ -2,7 +2,7 @@
 
 ## macOS · Apple Silicon và Intel
 
-Launcher macOS nằm ở [`desktop/macos`](desktop/macos/USER-GUIDE.md), dùng chung frontend/backend/migrations với Windows. Gói DMG/ZIP kèm MySQL và Chromium, cấu hình dùng Keychain, đóng cửa sổ/Command+Q dừng dịch vụ và dọn cache phiên. macOS 14+, hai bản `arm64` và `x64`. [Tải bản Mac](https://github.com/tahieu98/dunnio-user-behavior-tracker/releases) · [Build và kiểm thử](https://github.com/tahieu98/dunnio-user-behavior-tracker/actions/workflows/macos.yml). Bản preview ad-hoc signed, chưa notarized; đọc hướng dẫn trước khi cài.
+Launcher macOS nằm ở [`desktop/macos`](desktop/macos/USER-GUIDE.md), dùng chung frontend/backend/migrations với Windows. Gói DMG/ZIP kèm MySQL và Chromium, cấu hình dùng Keychain, đóng cửa sổ/Command+Q dừng dịch vụ và dọn cache phiên. macOS 14+, hai bản `arm64` và `x64`. [Tài liệu kiến trúc và phát triển](desktop/macos/TECHNICAL-ARCHITECTURE.md) · [Tải bản Mac và source](https://github.com/tahieu98/dunnio-user-behavior-tracker/releases) · [Build và kiểm thử](https://github.com/tahieu98/dunnio-user-behavior-tracker/actions/workflows/macos.yml). Bản preview ad-hoc signed, chưa notarized; đọc hướng dẫn trước khi cài.
 
 ## Cấu trúc dự án
 

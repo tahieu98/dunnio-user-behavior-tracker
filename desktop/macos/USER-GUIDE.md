@@ -1,5 +1,7 @@
 # Dunnio Insights 1.5.0 · macOS
 
+Tài liệu dành cho người phát triển: [TECHNICAL-ARCHITECTURE.md](TECHNICAL-ARCHITECTURE.md). Bộ bàn giao source: [DELIVERY-README.md](DELIVERY-README.md).
+
 ## Cài đặt
 
 macOS 14 trở lên. Chọn `arm64` cho Mac chip Apple Silicon (M1/M2/M3/M4…) hoặc `x64` cho Mac Intel. Tải DMG hoặc ZIP từ [GitHub Releases](https://github.com/tahieu98/dunnio-user-behavior-tracker/releases). Trong DMG kéo Dunnio Insights vào Applications, rồi mở ứng dụng. MySQL, Node trong Electron và Chromium để chụp trang được kèm; không cần cài Homebrew/MySQL/Chrome và không cần sudo.

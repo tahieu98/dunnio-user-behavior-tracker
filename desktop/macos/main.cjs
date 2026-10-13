@@ -46,7 +46,7 @@ async function start(){
  worker.once('exit',()=>{stopResolve();for(const p of pending.values()){clearTimeout(p.timer);p.reject(new Error('Dịch vụ đã dừng'));}pending.clear();if(!quitting&&ready)void fail(new Error('Tiến trình điều khiển dịch vụ đã thoát.'));});
  worker.send({type:'start',settings,options:{root,resources,execPath:process.execPath,instance}});
  await boot;
- if(smoke){await smokeTest();await shutdown();app.exit(0);return;}
+ if(smoke){if(process.argv.includes('--smoke-hold'))return;await smokeTest();await shutdown();app.exit(0);return;}
  window.webContents.setWindowOpenHandler(({url})=>{if(security.externalHttps(url))void shell.openExternal(url);return {action:'deny'};});
  window.webContents.on('will-navigate',(event,url)=>{if(!security.trustedLocal(url,base)){event.preventDefault();if(security.externalHttps(url))void shell.openExternal(url);}});
  window.webContents.session.setPermissionRequestHandler((contents,permission,callback)=>callback(contents===window.webContents&&permission==='clipboard-sanitized-write'));

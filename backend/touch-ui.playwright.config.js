@@ -1,0 +1,3 @@
+'use strict';
+const {defineConfig}=require('@playwright/test');
+module.exports=defineConfig({testDir:'./test/browser',testMatch:'touch-ui.spec.js',workers:1,fullyParallel:false,timeout:45000,reporter:'list',outputDir:'../test-results/touch-ui/runs',use:{channel:'chrome',headless:true,baseURL:'http://127.0.0.1:3028',viewport:{width:1440,height:1000},trace:'retain-on-failure',screenshot:'only-on-failure'},webServer:{command:'node -e "const path=require(\'path\');const app=require(\'express\')();app.use(require(\'express\').static(path.resolve(\'../frontend\')));app.use(\'/tracker\',require(\'express\').static(path.resolve(\'../tracker\')));app.listen(3028,\'127.0.0.1\');"',url:'http://127.0.0.1:3028/touch.html',reuseExistingServer:false}});

@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="vi">
+<head>
+ <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex,nofollow">
+ <title>Dunnio Insights · Xu hướng Clarity</title>
+ <link rel="stylesheet" href="css/clarity-workspace.css"><script src="js/clarity-workspace.js" defer></script>
+</head>
+<body>
+ <a class="skip" href="#workspace">Đến nội dung</a>
+ <header class="topbar"><a class="brand" href="analysis.html"><span class="brand-mark">D</span><span>DUNNIO <small>CLARITY WORKSPACE</small></span></a><nav aria-label="Điều hướng"><a href="#collection">Thu thập</a><a href="#imports">Kho bản xuất</a><a href="#comparison">Xu hướng</a><a href="tracker-analysis.html">Tracker cũ</a></nav><div><span id="identity"></span><button id="logout" class="quiet">Đăng xuất</button></div></header>
+ <main id="workspace">
+  <div class="heading"><div><p class="eyebrow">CONTENT & INTERACTION</p><h1>Hành vi thay đổi ở đâu?</h1><p>Chọn trang, lấy bản xuất Clarity theo từng khoảng ngày và đối chiếu số lượt tương tác qua nhiều kỳ.</p></div><span class="source-badge">Clarity · dữ liệu tổng hợp</span></div>
+  <div id="message" role="status" aria-live="polite"></div>
+  <section class="card filters" aria-label="Website và bộ lọc">
+   <label>Website<select id="site"></select></label><label>Project ID Clarity<input id="projectId" maxlength="100" placeholder="Project ID trên URL Clarity"></label>
+   <label>Thiết bị<select id="device"><option value="mobile">Mobile · Tap</option><option value="desktop">Desktop · Click</option><option value="tablet">Tablet · Tap</option></select></label>
+   <label>Loại tương tác<select id="heatmapType"><option value="all-clicks">All clicks / taps</option><option value="dead-clicks">Dead clicks</option><option value="rage-clicks">Rage clicks</option><option value="error-clicks">Error clicks</option><option value="first-clicks">First clicks</option><option value="last-clicks">Last clicks</option></select></label>
+   <label>Múi giờ bộ lọc<input id="timezone" value="Asia/Ho_Chi_Minh" maxlength="64" list="timezones"></label><datalist id="timezones"><option value="Asia/Ho_Chi_Minh"><option value="UTC"></datalist>
+   <label class="wide">Segment / bộ lọc bổ sung<input id="segment" maxlength="500" placeholder="Để trống nếu không có bộ lọc bổ sung"></label>
+  </section>
+  <section class="card" id="collection">
+   <div class="section-head"><div><p class="eyebrow">01 · COLLECTION</p><h2>Thu thập theo URL và khoảng ngày</h2><p>Mỗi URL × khoảng ngày là một mục. Hàng đợi giữ bộ lọc và tiến độ để bạn hoặc trợ lý thao tác trên Chrome.</p></div><button id="manifest" disabled>↓ Hướng dẫn cho trợ lý</button></div>
+   <div class="collection-grid">
+    <div><label>Tìm URL / tiêu đề<input id="pageSearch" type="search" placeholder="Ví dụ: suit-color, /blog/"></label><div class="actions"><button id="selectPages">Chọn các trang đang hiển thị</button><button id="clearPages" class="quiet">Bỏ chọn</button><span id="pageCount"></span></div><div id="pageList" class="page-list"></div><details><summary>Thêm URL vào danh mục</summary><form id="pageForm"><label>URL công khai<input name="url" type="url" required></label><label>Tiêu đề<input name="title" required maxlength="255"></label><button type="submit" data-write>Đăng ký URL</button></form></details></div>
+    <div><label>Tên đợt thu thập<input id="runName" value="Đối chiếu hành vi nội dung" maxlength="120"></label><div id="periods"></div><button id="addPeriod">+ Thêm khoảng ngày</button><p class="hint">Tối đa 50 URL và 12 khoảng. Nhập đúng múi giờ bạn dùng trên Clarity.</p><button id="createRun" class="primary" data-write>Tạo hàng đợi</button></div>
+   </div>
+   <div class="actions"><label>Đợt đã lưu<select id="run"></select></label><button id="refreshRuns">Làm mới tiến độ</button><strong id="runProgress"></strong></div>
+   <div class="table-wrap" tabindex="0" role="region" aria-label="Hàng đợi thu thập"><table><thead><tr><th>URL</th><th>Khoảng ngày</th><th>Trạng thái</th><th>Thao tác</th></tr></thead><tbody id="jobRows"></tbody></table></div>
+   <div id="jobGuide" class="callout" hidden><h3 id="jobTitle"></h3><p id="jobInstructions"></p><div class="actions"><a id="portalLink" target="_blank" rel="noopener" class="button">Mở project Clarity ↗</a><button id="copyGuide">Sao chép hướng dẫn</button><button id="useJob" class="primary" data-write>Nhập file cho mục này</button></div><p class="hint">Liên kết mở project. Bộ lọc phải được áp dụng và kiểm tra trên Clarity; ứng dụng chưa tự điều khiển Chrome.</p></div>
+  </section>
+  <section class="card" id="imports">
+   <div class="section-head"><div><p class="eyebrow">02 · ARCHIVE</p><h2>Kho bản xuất Clarity</h2><p>CSV giữ số lượt theo phần tử. PNG giữ hình heatmap của lần xuất. Có thể chỉ lưu CSV để giảm dung lượng.</p></div></div>
+   <label>Trang đang phân tích / nhập dữ liệu<select id="page"></select></label>
+   <form id="importForm">
+    <p id="importJob" class="hint">Nhập độc lập cho trang đang chọn.</p><div class="form-grid">
+     <label>Từ ngày<input name="start" type="date" required></label><label>Đến ngày<input name="end" type="date" required></label>
+     <label>CSV Clarity<input name="csvFile" type="file" accept=".csv,text/csv"></label><label>PNG Clarity (tùy chọn)<input name="pngFile" type="file" accept=".png,image/png"></label>
+     <label>Page views (nếu có)<input name="pageviews" type="number" min="0" max="2147483647"></label><label>Clicks / taps tổng (nếu có)<input name="clicks" type="number" min="0" max="2147483647"></label>
+    </div><label class="check"><input name="complete" type="checkbox"> CSV là danh sách đầy đủ phần tử có tương tác của bộ lọc này; phần tử vắng mặt được tính là 0.</label>
+    <label class="check"><input name="confirmed" type="checkbox" required> Tôi xác nhận file đúng URL, khoảng ngày, thiết bị, loại tương tác, segment và múi giờ đang chọn.</label>
+    <div class="actions"><button class="primary" type="submit" data-write>Lưu bản xuất</button><button type="button" id="detachJob" class="quiet">Bỏ liên kết hàng đợi</button></div>
+   </form>
+   <div class="actions"><button id="refreshReports">Làm mới kho</button><button id="compare" class="primary" disabled>Đối chiếu các bản đã chọn</button><span id="reportCount"></span></div>
+   <div class="table-wrap" tabindex="0" role="region" aria-label="Kho bản xuất"><table><thead><tr><th>Chọn</th><th>Khoảng ngày / bản xuất</th><th>Bộ lọc</th><th>Page views</th><th>Phần tử</th><th>File gốc</th></tr></thead><tbody id="reportRows"></tbody></table></div>
+  </section>
+  <section class="card" id="comparison">
+   <div class="section-head"><div><p class="eyebrow">03 · WHAT CHANGED</p><h2>Xu hướng qua nhiều khoảng thời gian</h2><p>Đối chiếu cùng URL và bộ lọc. Phần trăm được tính từ số lượt của kỳ trước; bảng có thêm lượt trên 100 page views.</p></div><button id="export" disabled>↓ Xuất báo cáo CSV</button></div>
+   <div id="warnings" class="callout" hidden></div>
+   <div class="actions"><label>Lọc phần tử<input id="elementSearch" type="search" placeholder="Selector hoặc khóa đối chiếu"></label><label>Thay đổi<select id="trend"><option value="all">Tất cả</option><option value="up">Tăng</option><option value="down">Giảm</option><option value="new">Phát sinh từ 0</option><option value="missing">Thiếu dữ liệu</option></select></label><span id="trendCount"></span><button id="previousTrends">← Trước</button><button id="nextTrends">Sau →</button></div>
+   <details><summary>So sánh tổng nhiều khoảng · ví dụ tháng 5–6 với tháng 7–8</summary><div class="actions"><label>Nhóm A<select id="groupA" multiple size="4"></select></label><label>Nhóm B<select id="groupB" multiple size="4"></select></label><button id="compareGroups" disabled>So sánh hai nhóm</button><button id="clearGroups" disabled>Xem từng khoảng</button></div><p class="hint">Giữ Ctrl để chọn nhiều khoảng trên máy tính. Các khoảng phải tách biệt; số liệu thiếu vẫn giữ là chưa xác định.</p></details>
+   <div class="table-wrap" tabindex="0" role="region" aria-label="Bảng xu hướng"><table id="trendTable"><thead></thead><tbody><tr><td>Chọn ít nhất hai bản xuất để xem xu hướng.</td></tr></tbody></table></div>
+   <div class="actions"><label>Ảnh A<select id="panelA"></select></label><label>Ảnh B<select id="panelB"></select></label><label class="check"><input id="gridToggle" type="checkbox" checked> Lưới 12 cột · hàng 50 px</label><label>Phóng to<select id="zoom"><option value="1">Vừa khung</option><option value="1.5">150%</option><option value="2">200%</option></select></label></div>
+   <div class="panels"><article><h3 id="titleA">Ảnh A</h3><div class="map-scroll" tabindex="0" role="region" aria-label="Ảnh heatmap A có thể cuộn"><div id="mapA" class="map-content"></div></div></article><article><h3 id="titleB">Ảnh B</h3><div class="map-scroll" tabindex="0" role="region" aria-label="Ảnh heatmap B có thể cuộn"><div id="mapB" class="map-content"></div></div></article></div>
+   <div class="inspector" id="inspector"><h3>Vị trí phần tử trên ảnh</h3><p id="elementDetail">Chọn một phần tử trong bảng để xem số lượt và đánh dấu vị trí trên từng ảnh.</p><div class="actions"><label>Ảnh đánh dấu<select id="anchorReport"></select></label><button id="armAnchor" disabled data-write>Đánh dấu vị trí trên ảnh</button><label>X (px ảnh)<input id="anchorX" type="number" min="0" step="any"></label><label>Y (px ảnh)<input id="anchorY" type="number" min="0" step="any"></label></div><div class="actions"><label>Nhãn phần tử<input id="anchorLabel" maxlength="200"></label><label>Khóa ghép qua các kỳ (tùy chọn)<input id="matchKey" maxlength="200" placeholder="Ví dụ: suit-color-guide"></label><button id="saveAnchor" disabled data-write>Lưu điểm neo / khóa ghép</button><button id="clearAnchor" disabled data-write>Gỡ điểm neo đã chọn</button></div><label class="check"><input id="anchorConfirmed" type="checkbox"> Tôi đã đối chiếu phần tử với ảnh; khóa ghép (nếu có) chỉ cùng một phần tử qua các kỳ.</label><p id="anchorNotice" class="hint">Điểm neo do người phân tích xác nhận; số lượt thuộc phần tử, không phải số lượt tại pixel được đánh dấu.</p></div>
+  </section>
+  <footer>DUNNIO INSIGHTS · v1.4.0 <span>CSV/PNG và số liệu tổng hợp · không cần cài tracker trên website</span></footer>
+ </main>
+</body>
+</html>

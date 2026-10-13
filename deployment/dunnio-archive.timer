@@ -1,0 +1,11 @@
+[Unit]
+Description=Archive closed Vietnam reporting days
+
+[Timer]
+OnCalendar=*-*-* 02:15:00 Asia/Ho_Chi_Minh
+Persistent=true
+RandomizedDelaySec=60
+Unit=dunnio-archive.service
+
+[Install]
+WantedBy=timers.target

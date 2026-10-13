@@ -1,0 +1,8 @@
+{
+  "mysqlVersion": "8.4.3",
+  "minimumMacOS": "14.0",
+  "mysql": {
+    "arm64": {"url": "https://cdn.mysql.com/archives/mysql-8.4/mysql-8.4.3-macos14-arm64.tar.gz", "sha256": "af1af43030ac66b73dc2d5dcf645a61cdf9e7cf5404cf04bdf8e194447b0f153"},
+    "x64": {"url": "https://cdn.mysql.com/archives/mysql-8.4/mysql-8.4.3-macos14-x86_64.tar.gz", "sha256": "b690dfaad2108889390d40df388c16453e345f69a77784444687e8e308855af6"}
+  }
+}

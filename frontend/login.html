@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noindex,nofollow">
+    <title>Dunnio Behavior Tracker - Login</title>
+    <link rel="stylesheet" href="css/auth.css">
+</head>
+<body>
+    <div class="auth-container">
+        <div class="auth-card">
+            <div class="auth-header">
+                <div class="logo">
+                    <span class="logo-icon">📊</span>
+                    <span class="logo-text">Dunnio Tracker</span>
+                </div>
+                <h1>Đăng nhập Dunnio Insights</h1>
+                <p>Phân tích điểm chạm và hành động trên nội dung website</p>
+            </div>
+
+            <form id="loginForm" class="auth-form">
+                <div class="form-group">
+                    <label for="username">Tên đăng nhập</label>
+                    <input type="text" id="username" name="username" required
+                           placeholder="Tên đăng nhập của bạn" autocomplete="username">
+                </div>
+
+                <div class="form-group">
+                    <label for="password">Mật khẩu</label>
+                    <input type="password" id="password" name="password" required
+                           placeholder="Mật khẩu tài khoản" autocomplete="current-password">
+                </div>
+
+                <div class="form-group remember">
+                    <label class="checkbox-label">
+                        <input type="checkbox" id="remember" name="remember">
+                        <span>Ghi nhớ trên thiết bị này</span>
+                    </label>
+                </div>
+
+                <div id="errorMessage" class="error-message" style="display: none;"></div>
+
+                <button type="submit" class="btn-primary" id="loginBtn">
+                    <span class="btn-text">Đăng nhập</span>
+                    <span class="btn-loader" style="display: none;">Đang đăng nhập…</span>
+                </button>
+            </form>
+
+            <div class="auth-footer">
+                <p>Tài khoản do quản trị viên cấp. Không có mật khẩu mặc định.</p>
+                <a href="analysis.html?demo=1">Xem bản minh họa →</a>
+            </div>
+        </div>
+
+        <div class="auth-info">
+            <h3>Dunnio Behavior Tracker</h3>
+            <p>Dành cho Developer và Content Editor:</p>
+            <ul>
+                <li>Lưới tọa độ phủ trên ảnh trang</li>
+                <li>So sánh hành vi giữa các tháng</li>
+                <li>Đề xuất cải thiện gắn với nội dung</li>
+                <li>Phân biệt lượt chạm và hành động đã xác nhận</li>
+            </ul>
+        </div>
+    </div>
+
+    <script src="js/auth.js"></script>
+</body>
+</html>

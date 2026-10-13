@@ -1,0 +1,28 @@
+'use strict';
+require('dotenv').config({path:process.env.DOTENV_CONFIG_PATH||undefined});
+// Dedicated local benchmark only. The deployed default remains 120 requests/IP/min.
+process.env.TOUCH_INGEST_LIMIT='6000';
+const crypto=require('node:crypto'),os=require('node:os'),fs=require('node:fs/promises'),path=require('node:path'),{performance}=require('node:perf_hooks');
+const {app}=require('../src/server'),{query,pool}=require('../src/config/database');
+async function main(){
+ const batches=Number(process.env.TOUCH_LOAD_BATCHES||300),concurrency=Number(process.env.TOUCH_LOAD_CONCURRENCY||6),points=Number(process.env.TOUCH_LOAD_POINTS||30);
+ if(!Number.isInteger(batches)||batches<1||batches>3000||!Number.isInteger(concurrency)||concurrency<1||concurrency>30||!Number.isInteger(points)||points<1||points>99)throw new Error('Invalid bounded benchmark configuration');
+ const suffix=crypto.randomBytes(5).toString('hex'),key=crypto.randomUUID(),server=app.listen(0,'127.0.0.1');await new Promise(r=>server.once('listening',r));
+ const origin=`http://127.0.0.1:${server.address().port}`,base=origin+'/api/tracker/touch';let siteId;
+ try{
+  siteId=(await query('INSERT INTO tracking_sites(name,origin,public_key,goal_paths,tracking_scope) VALUES (?,?,?,?,?)',['Touch load '+suffix,origin,key,'[]','all-public'])).insertId;
+  let next=0,duplicates=0,peakRSS=process.memoryUsage().rss;const times=[],errors=[],cpu=process.cpuUsage(),started=performance.now();const sample=setInterval(()=>{peakRSS=Math.max(peakRSS,process.memoryUsage().rss);},100);
+  async function send(body){const t=performance.now(),r=await fetch(base,{method:'POST',headers:{'Content-Type':'application/json',Origin:origin},body:JSON.stringify(body)}),json=await r.json();times.push(performance.now()-t);if(r.status!==202)errors.push({status:r.status,message:json.message});return json;}
+  try{await Promise.all(Array.from({length:concurrency},async()=>{for(;;){const i=next++;if(i>=batches)break;const timestamp=Date.now(),body={schemaVersion:1,siteKey:key,batchId:crypto.randomUUID(),consent:true,sampleRate:1,context:{pagePath:'/load-page-'+i%50,layoutVersion:'load-v1',device:'desktop',viewportWidth:1200,viewportHeight:900,documentHeight:6000},entries:[{type:'pageview',timestamp,count:1},...Array.from({length:points},(_,p)=>({type:'tap',timestamp,count:10,x:40+(p%10)*110,y:150+Math.floor(p/10)*100,elementKey:'load-'+p,region:'load',anchorQuality:'explicit',elementU:0.5,elementV:0.5,elementRect:{x:20+(p%10)*110,y:130+Math.floor(p/10)*100,width:40,height:40},fixed:false,pointerType:'mouse'}))]};await send(body);if(i%20===0){const result=await send(body);if(result.data?.duplicate)duplicates++;}}}));}finally{clearInterval(sample);}
+  const elapsed=(performance.now()-started)/1000,used=process.cpuUsage(cpu),rows={};for(const table of ['touch_daily_pages','touch_daily_points','touch_daily_elements','touch_batches'])rows[table]=Number((await query(`SELECT COUNT(*) n FROM ${table} WHERE site_id=?`,[siteId]))[0].n);
+  const totals=(await query('SELECT SUM(pageviews) pageviews,SUM(taps) taps FROM touch_daily_pages WHERE site_id=?',[siteId]))[0];times.sort((a,b)=>a-b);const percentile=q=>Math.round((times[Math.min(times.length-1,Math.floor(q*times.length))]||0)*100)/100;
+  const [db]=(await query('SELECT VERSION() version'));const size=await query("SELECT TABLE_NAME name,DATA_LENGTH dataBytes,INDEX_LENGTH indexBytes FROM information_schema.TABLES WHERE TABLE_SCHEMA=DATABASE() AND TABLE_NAME IN ('touch_batches','touch_daily_pages','touch_daily_points','touch_daily_elements')");
+  const result={measuredAt:new Date().toISOString(),environment:{os:os.type()+' '+os.release(),cpu:os.cpus()[0].model,logicalCpus:os.cpus().length,memoryGiB:Math.round(os.totalmem()/1024**3*100)/100,node:process.version,mysql:db.version},configuration:{batches,concurrency,pointsPerBatch:points,receivedTapsPerPoint:10,urls:50,limiterPerIPPerMinute:6000,defaultProductionLimiter:120},results:{seconds:Math.round(elapsed*100)/100,requests:times.length,requestsPerSecond:Math.round(times.length/elapsed*100)/100,receivedTapsPerSecond:Math.round(Number(totals.taps)/elapsed),latencyMs:{p50:percentile(.5),p95:percentile(.95),p99:percentile(.99)},errors,duplicateRetries:duplicates,expectedPageviews:batches,actualPageviews:Number(totals.pageviews),expectedTaps:batches*points*10,actualTaps:Number(totals.taps),rows,peakNodeRSSMiB:Math.round(peakRSS/1024**2),nodeCpuMs:Math.round((used.user+used.system)/1000),allocatedDatabaseTables:size},limitations:['Local Windows Ryzen host, not a VPS or container capacity measurement.','Load generator and Express share one process; Node CPU/RSS include both.','Repeated bounded coordinates; this is not a worst-case unique-point workload.','Public origin/key do not prove a human interaction; this benchmark submits synthetic fixture batches.']};
+  result.passed=errors.length===0&&result.results.actualPageviews===batches&&result.results.actualTaps===batches*points*10&&duplicates===Math.ceil(batches/20);
+  const file=path.resolve(process.env.TOUCH_LOAD_OUTPUT||'../test-results/touch-load.json');await fs.mkdir(path.dirname(file),{recursive:true});await fs.writeFile(file,JSON.stringify(result,null,2)+'\n');console.log(JSON.stringify({...result,file},null,2));if(!result.passed)process.exitCode=1;
+ }finally{
+  if(siteId){for(const table of ['touch_daily_pages','touch_daily_points','touch_daily_elements','touch_batches','tracked_pages'])await query(`DELETE FROM ${table} WHERE site_id=?`,[siteId]);await query('DELETE FROM tracking_sites WHERE id=?',[siteId]);}
+  await new Promise(r=>server.close(r));await pool.end();
+ }
+}
+main().catch(e=>{console.error(e.message);process.exitCode=1;pool.end();});

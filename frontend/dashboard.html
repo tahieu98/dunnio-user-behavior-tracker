@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dunnio Behavior Tracker - Dashboard</title>
+    <link rel="stylesheet" href="css/main.css">
+    <link rel="stylesheet" href="css/grid.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+</head>
+<body>
+    <div id="app">
+        <!-- Sidebar -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <div class="logo">
+                    <span class="logo-icon">📊</span>
+                    <span class="logo-text">Dunnio Tracker</span>
+                </div>
+                <button class="sidebar-toggle" id="sidebarToggle">
+                    <span>☰</span>
+                </button>
+            </div>
+
+            <nav class="sidebar-nav">
+                <a href="analysis.html" class="nav-item"><span class="nav-icon">↔</span><span class="nav-text">Phân tích & so sánh tháng</span></a>
+                <a href="#" class="nav-item active" data-page="dashboard">
+                    <span class="nav-icon">📈</span>
+                    <span class="nav-text">Dashboard</span>
+                </a>
+                <a href="#" class="nav-item" data-page="pages">
+                    <span class="nav-icon">📄</span>
+                    <span class="nav-text">Pages</span>
+                </a>
+                <a href="#" class="nav-item" data-page="grid-view">
+                    <span class="nav-icon">🔲</span>
+                    <span class="nav-text">Grid View</span>
+                </a>
+                <a href="#" class="nav-item" data-page="heatmap">
+                    <span class="nav-icon">🔥</span>
+                    <span class="nav-text">Heatmap</span>
+                </a>
+                <a href="#" class="nav-item" data-page="suggestions">
+                    <span class="nav-icon">💡</span>
+                    <span class="nav-text">CTA Suggestions</span>
+                </a>
+                <a href="#" class="nav-item" data-page="settings">
+                    <span class="nav-icon">⚙️</span>
+                    <span class="nav-text">Settings</span>
+                </a>
+            </nav>
+
+            <div class="sidebar-footer">
+                <div class="user-info" id="userInfo">
+                    <span class="user-avatar">👤</span>
+                    <div class="user-details">
+                        <span class="user-name" id="userName">Loading...</span>
+                        <span class="user-role" id="userRole">-</span>
+                    </div>
+                </div>
+                <button class="logout-btn" id="logoutBtn">
+                    <span>🚪</span> Logout
+                </button>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Header -->
+            <header class="header">
+                <div class="header-left">
+                    <h1 class="page-title" id="pageTitle">Dashboard</h1>
+                    <span class="breadcrumb" id="breadcrumb">Home / Dashboard</span>
+                </div>
+                <div class="header-right">
+                    <div class="clarity-status" id="clarityStatus">
+                        <span class="status-dot"></span>
+                        <span class="status-text">Clarity: Not Connected</span>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Content Area -->
+            <div class="content" id="contentArea">
+                <div class="card" style="padding:16px;margin-bottom:20px">Đây là công cụ quản trị đời đầu. Heatmap đo thật, so sánh tháng và đề xuất theo dữ liệu mới nằm ở <a href="analysis.html">Dunnio Insights</a>. Các bảng click/grid cũ không dùng để kết luận hiệu quả chuyển đổi.</div>
+                <!-- Dashboard Page -->
+                <div class="page active" id="dashboardPage">
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-icon">📄</div>
+                            <div class="stat-content">
+                                <span class="stat-value" id="totalPages">0</span>
+                                <span class="stat-label">Total Pages</span>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon">🔥</div>
+                            <div class="stat-content">
+                                <span class="stat-value" id="totalClicks">0</span>
+                                <span class="stat-label">Total Clicks (7d)</span>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon">💡</div>
+                            <div class="stat-content">
+                                <span class="stat-value" id="totalSuggestions">0</span>
+                                <span class="stat-label">Suggestions</span>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon">✅</div>
+                            <div class="stat-content">
+                                <span class="stat-value" id="implementedCount">0</span>
+                                <span class="stat-label">Implemented</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="dashboard-grid">
+                        <div class="card">
+                            <div class="card-header">
+                                <h3>Recent Suggestions</h3>
+                                <a href="#" class="card-link" data-page="suggestions">View All →</a>
+                            </div>
+                            <div class="card-body" id="recentSuggestions">
+                                <div class="empty-state">No suggestions yet</div>
+                            </div>
+                        </div>
+
+                        <div class="card">
+                            <div class="card-header">
+                                <h3>Top Hotspots</h3>
+                            </div>
+                            <div class="card-body" id="topHotspots">
+                                <div class="empty-state">Select a page to view hotspots</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Pages Page -->
+                <div class="page" id="pagesPage">
+                    <div class="page-header">
+                        <div class="filters">
+                            <select id="categoryFilter" class="filter-select">
+                                <option value="">All Categories</option>
+                            </select>
+                            <select id="pageTypeFilter" class="filter-select">
+                                <option value="">All Types</option>
+                                <option value="product">Product Pages</option>
+                                <option value="3d-demo">3D Demo</option>
+                            </select>
+                            <input type="text" id="searchPages" class="search-input" placeholder="Search pages...">
+                        </div>
+                        <button class="btn-primary" id="syncAllBtn">
+                            🔄 Sync All Pages
+                        </button>
+                    </div>
+
+                    <div class="pages-grid" id="pagesGrid">
+                        <!-- Pages will be loaded here -->
+                    </div>
+
+                    <div class="pagination" id="pagesPagination">
+                        <button class="pagination-btn" id="prevPage">← Previous</button>
+                        <span class="pagination-info" id="paginationInfo">Page 1 of 1</span>
+                        <button class="pagination-btn" id="nextPage">Next →</button>
+                    </div>
+                </div>
+
+                <!-- Grid View Page -->
+                <div class="page" id="gridViewPage">
+                    <div class="grid-controls">
+                        <div class="page-selector">
+                            <label>Select Page:</label>
+                            <select id="gridPageSelect" class="filter-select">
+                                <option value="">Choose a page...</option>
+                            </select>
+                        </div>
+                        <div class="grid-options">
+                            <label>
+                                <input type="checkbox" id="showElements" checked>
+                                Show Elements
+                            </label>
+                            <label>
+                                <input type="checkbox" id="showLabels">
+                                Show Labels
+                            </label>
+                            <select id="timeRange" class="filter-select">
+                                <option value="7">Last 7 days</option>
+                                <option value="14">Last 14 days</option>
+                                <option value="30">Last 30 days</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="grid-container" id="gridContainer">
+                        <div class="grid-overlay" id="gridOverlay">
+                            <!-- Grid cells will be rendered here -->
+                        </div>
+                        <div class="grid-placeholder">
+                            <p>Select a page to view grid visualization</p>
+                        </div>
+                    </div>
+
+                    <div class="grid-legend">
+                        <span class="legend-item"><span class="legend-color cold"></span> Cold (No clicks)</span>
+                        <span class="legend-item"><span class="legend-color warm"></span> Warm (Some clicks)</span>
+                        <span class="legend-item"><span class="legend-color hot"></span> Hot (Many clicks)</span>
+                        <span class="legend-item"><span class="legend-color dead"></span> Dead Zone</span>
+                    </div>
+                </div>
+
+                <!-- Heatmap Page -->
+                <div class="page" id="heatmapPage">
+                    <div class="heatmap-controls">
+                        <div class="page-selector">
+                            <label>Select Page:</label>
+                            <select id="heatmapPageSelect" class="filter-select">
+                                <option value="">Choose a page...</option>
+                            </select>
+                        </div>
+                        <div class="heatmap-options">
+                            <select id="heatmapType" class="filter-select">
+                                <option value="clicks">Click Heatmap</option>
+                                <option value="scroll">Scroll Heatmap</option>
+                                <option value="engagement">Engagement Heatmap</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="heatmap-container" id="heatmapContainer">
+                        <canvas id="heatmapChart"></canvas>
+                    </div>
+
+                    <div class="heatmap-stats" id="heatmapStats">
+                        <!-- Heatmap statistics will be shown here -->
+                    </div>
+                </div>
+
+                <!-- Suggestions Page -->
+                <div class="page" id="suggestionsPage">
+                    <div class="suggestions-header">
+                        <div class="suggestion-filters">
+                            <select id="statusFilter" class="filter-select">
+                                <option value="">All Status</option>
+                                <option value="pending">Pending</option>
+                                <option value="approved">Approved</option>
+                                <option value="implemented">Implemented</option>
+                                <option value="rejected">Rejected</option>
+                            </select>
+                            <select id="typeFilter" class="filter-select">
+                                <option value="">All Types</option>
+                                <option value="cta_button">CTA Button</option>
+                                <option value="internal_link">Internal Link</option>
+                                <option value="promo_banner">Promo Banner</option>
+                                <option value="product_feature">Product Feature</option>
+                            </select>
+                        </div>
+                        <button class="btn-secondary" id="generateSuggestions">
+                            ✨ Generate Suggestions
+                        </button>
+                    </div>
+
+                    <div class="suggestions-list" id="suggestionsList">
+                        <!-- Suggestions will be loaded here -->
+                    </div>
+
+                    <div class="pagination" id="suggestionsPagination">
+                        <button class="pagination-btn" id="prevSuggestions">← Previous</button>
+                        <span class="pagination-info" id="suggestionsPaginationInfo">Page 1 of 1</span>
+                        <button class="pagination-btn" id="nextSuggestions">Next →</button>
+                    </div>
+                </div>
+
+                <!-- Settings Page -->
+                <div class="page" id="settingsPage">
+                    <div class="settings-grid">
+                        <div class="card">
+                            <div class="card-header">
+                                <h3>🔑 Clarity API Configuration</h3>
+                            </div>
+                            <div class="card-body">
+                                <form id="clarityConfigForm">
+                                    <div class="form-group">
+                                        <label>Project ID</label>
+                                        <input type="text" id="clarityProjectId" placeholder="Enter Clarity Project ID">
+                                    </div>
+                                    <div class="form-group">
+                                        <label>JWT Token</label>
+                                        <input type="password" id="clarityToken" placeholder="Enter your Clarity JWT token">
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Project Name (optional)</label>
+                                        <input type="text" id="clarityProjectName" placeholder="e.g., Dunnio Production">
+                                    </div>
+                                    <button type="submit" class="btn-primary">Save Configuration</button>
+                                </form>
+                            </div>
+                        </div>
+
+                        <div class="card">
+                            <div class="card-header">
+                                <h3>👥 User Management</h3>
+                            </div>
+                            <div class="card-body">
+                                <div id="userList">
+                                    <!-- Users will be loaded here -->
+                                </div>
+                                <button class="btn-secondary" id="addUserBtn">+ Add New User</button>
+                            </div>
+                        </div>
+
+                        <div class="card">
+                            <div class="card-header">
+                                <h3>📊 Data Management</h3>
+                            </div>
+                            <div class="card-body">
+                                <div class="data-actions">
+                                    <button class="btn-secondary" id="exportDataBtn">📤 Export Data (CSV)</button>
+                                    <button class="btn-secondary" id="syncNowBtn">🔄 Sync Now</button>
+                                    <button class="btn-danger" id="clearDataBtn">🗑️ Clear Old Data</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Modal for suggestion details -->
+    <div class="modal" id="suggestionModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="modalTitle">Suggestion Details</h3>
+                <button class="modal-close" id="modalClose">×</button>
+            </div>
+            <div class="modal-body" id="modalBody">
+                <!-- Modal content will be loaded here -->
+            </div>
+            <div class="modal-footer" id="modalFooter">
+                <!-- Action buttons -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast notifications -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <script src="js/app.js"></script>
+</body>
+</html>

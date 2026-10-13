@@ -1,0 +1,1 @@
+ALTER TABLE clarity_exports ADD COLUMN dimensions VARCHAR(120) NOT NULL DEFAULT 'URL';

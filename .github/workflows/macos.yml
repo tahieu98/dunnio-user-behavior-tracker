@@ -1,0 +1,86 @@
+name: macOS packages
+on:
+  push:
+    branches: [main]
+    paths: ['desktop/macos/**', 'backend/**', 'frontend/**', 'tracker/**', '.github/workflows/macos.yml', 'LICENSE']
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  package:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - runner: macos-15
+            arch: arm64
+          - runner: macos-15-intel
+            arch: x64
+    runs-on: ${{ matrix.runner }}
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: npm
+          cache-dependency-path: desktop/macos/package-lock.json
+      - name: Backend dependencies and unit tests
+        working-directory: backend
+        run: |
+          npm ci --ignore-scripts --no-fund
+          npm test
+          npm run test:touch
+      - name: macOS lifecycle and security tests
+        working-directory: desktop/macos
+        run: |
+          npm ci --no-fund
+          npm test
+      - name: Prepare bundled MySQL and Chromium
+        working-directory: desktop/macos
+        run: npm run prepare:bundle
+      - name: Build DMG and ZIP
+        working-directory: desktop/macos
+        env:
+          CSC_IDENTITY_AUTO_DISCOVERY: 'false'
+        run: npm run build -- --${{ matrix.arch }}
+      - name: Test the packaged app twice
+        working-directory: desktop/macos
+        run: |
+          APP=$(find ../../dist/macos -maxdepth 3 -name 'Dunnio Insights.app' -type d -print -quit)
+          test -n "$APP"
+          codesign --verify --deep --strict "$APP"
+          npm run smoke -- "$APP/Contents/MacOS/Dunnio Insights"
+      - name: Checksums
+        run: |
+          cd dist/macos
+          shasum -a 256 *.dmg *.zip > SHA256SUMS-${{ matrix.arch }}.txt
+      - uses: actions/upload-artifact@v4
+        with:
+          name: DunnioInsights-macos-${{ matrix.arch }}
+          path: |
+            dist/macos/*.dmg
+            dist/macos/*.zip
+            dist/macos/SHA256SUMS-*.txt
+          retention-days: 30
+  release:
+    needs: package
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          path: packages
+          merge-multiple: true
+      - name: Publish macOS preview
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          VERSION=$(node -p "require('./desktop/macos/package.json').version")
+          TAG="v${VERSION}-macos-preview"
+          if ! gh release view "$TAG" >/dev/null 2>&1; then
+            gh release create "$TAG" --target "$GITHUB_SHA" --title "Dunnio Insights ${VERSION} · macOS preview" --prerelease --notes-file desktop/macos/RELEASE-NOTES.md
+          fi
+          gh release upload "$TAG" packages/*.dmg packages/*.zip packages/SHA256SUMS-*.txt --clobber

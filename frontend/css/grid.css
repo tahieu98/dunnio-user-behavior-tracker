@@ -1,0 +1,321 @@
+/* Grid Visualization Styles */
+
+.grid-overlay {
+    display: grid;
+    background: white;
+    border: 1px solid var(--border-color);
+}
+
+.grid-row {
+    display: contents;
+}
+
+.grid-cell {
+    border: 1px solid #e5e7eb;
+    position: relative;
+    min-height: 50px;
+    transition: all 0.2s;
+    cursor: pointer;
+}
+
+.grid-cell:hover {
+    box-shadow: inset 0 0 0 2px var(--primary-color);
+    z-index: 10;
+}
+
+/* Heat Levels */
+.grid-cell.cold {
+    background: linear-gradient(135deg, #e0f2fe 0%, #bae6fd 100%);
+}
+
+.grid-cell.warm {
+    background: linear-gradient(135deg, #fef9c3 0%, #fde047 100%);
+}
+
+.grid-cell.hot {
+    background: linear-gradient(135deg, #fecaca 0%, #f87171 100%);
+}
+
+.grid-cell.dead {
+    background: #f9fafb;
+    border-style: dashed;
+}
+
+/* Intensity levels for more granular heat mapping */
+.grid-cell.heat-0 { background: #e0f2fe; }
+.grid-cell.heat-1 { background: #bae6fd; }
+.grid-cell.heat-2 { background: #7dd3fc; }
+.grid-cell.heat-3 { background: #fef9c3; }
+.grid-cell.heat-4 { background: #fde047; }
+.grid-cell.heat-5 { background: #fbbf24; }
+.grid-cell.heat-6 { background: #fed7aa; }
+.grid-cell.heat-7 { background: #fca5a5; }
+.grid-cell.heat-8 { background: #f87171; }
+.grid-cell.heat-9 { background: #ef4444; }
+
+/* Cell content */
+.cell-content {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 10px;
+    color: var(--text-muted);
+    text-align: center;
+    pointer-events: none;
+}
+
+.cell-content.hidden {
+    display: none;
+}
+
+/* Cell label */
+.cell-label {
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    font-size: 9px;
+    color: rgba(0, 0, 0, 0.4);
+    font-family: monospace;
+}
+
+/* Cell tooltip on hover */
+.cell-tooltip {
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--bg-dark);
+    color: white;
+    padding: 8px 12px;
+    border-radius: 6px;
+    font-size: 12px;
+    white-space: nowrap;
+    z-index: 100;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.2s;
+    pointer-events: none;
+}
+
+.cell-tooltip::after {
+    content: '';
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    border: 6px solid transparent;
+    border-top-color: var(--bg-dark);
+}
+
+.grid-cell:hover .cell-tooltip {
+    opacity: 1;
+    visibility: visible;
+    bottom: calc(100% + 8px);
+}
+
+.tooltip-stat {
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+}
+
+.tooltip-stat span:first-child {
+    color: rgba(255, 255, 255, 0.7);
+}
+
+/* Selected cell */
+.grid-cell.selected {
+    box-shadow: inset 0 0 0 3px var(--primary-color);
+    z-index: 20;
+}
+
+/* Cell with CTA suggestion */
+.grid-cell.has-cta {
+    position: relative;
+}
+
+.grid-cell.has-cta::after {
+    content: '💡';
+    position: absolute;
+    top: 2px;
+    right: 2px;
+    font-size: 12px;
+}
+
+/* Element markers */
+.element-marker {
+    position: absolute;
+    background: rgba(37, 99, 235, 0.2);
+    border: 1px dashed var(--primary-color);
+    border-radius: 4px;
+    pointer-events: none;
+    transition: all 0.2s;
+}
+
+.element-marker:hover {
+    background: rgba(37, 99, 235, 0.3);
+}
+
+/* Grid coordinates display */
+.grid-coords {
+    position: fixed;
+    bottom: 20px;
+    left: 20px;
+    background: var(--bg-dark);
+    color: white;
+    padding: 12px 16px;
+    border-radius: 8px;
+    font-size: 13px;
+    z-index: 100;
+    display: none;
+}
+
+.grid-coords.visible {
+    display: block;
+}
+
+.grid-coords-value {
+    font-family: monospace;
+    font-size: 16px;
+    font-weight: 600;
+}
+
+/* Grid controls */
+.grid-zoom-controls {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    display: flex;
+    gap: 8px;
+    z-index: 50;
+}
+
+.grid-zoom-btn {
+    width: 36px;
+    height: 36px;
+    background: white;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+}
+
+.grid-zoom-btn:hover {
+    background: var(--primary-color);
+    color: white;
+    border-color: var(--primary-color);
+}
+
+/* Cell info panel */
+.cell-info-panel {
+    position: fixed;
+    top: calc(var(--header-height) + 20px);
+    right: 20px;
+    width: 320px;
+    background: var(--card-bg);
+    border-radius: 12px;
+    box-shadow: var(--shadow-lg);
+    z-index: 100;
+    display: none;
+}
+
+.cell-info-panel.visible {
+    display: block;
+}
+
+.cell-info-header {
+    padding: 16px;
+    border-bottom: 1px solid var(--border-color);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.cell-info-header h4 {
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.cell-info-close {
+    background: none;
+    border: none;
+    font-size: 20px;
+    cursor: pointer;
+    color: var(--text-muted);
+}
+
+.cell-info-body {
+    padding: 16px;
+}
+
+.cell-info-stats {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-bottom: 16px;
+}
+
+.cell-stat {
+    background: var(--bg-color);
+    padding: 12px;
+    border-radius: 8px;
+}
+
+.cell-stat-label {
+    font-size: 11px;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    margin-bottom: 4px;
+}
+
+.cell-stat-value {
+    font-size: 18px;
+    font-weight: 600;
+}
+
+.cell-info-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+/* Heatmap gradient bar */
+.heatmap-gradient {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 16px;
+}
+
+.gradient-bar {
+    flex: 1;
+    height: 12px;
+    background: linear-gradient(to right, #e0f2fe, #7dd3fc, #fef9c3, #fde047, #fca5a5, #ef4444);
+    border-radius: 6px;
+}
+
+.gradient-labels {
+    display: flex;
+    justify-content: space-between;
+    font-size: 10px;
+    color: var(--text-muted);
+    margin-top: 4px;
+}
+
+/* Scroll indicator on grid */
+.scroll-indicator {
+    position: absolute;
+    right: 10px;
+    bottom: 10px;
+    background: rgba(0, 0, 0, 0.6);
+    color: white;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 11px;
+    z-index: 50;
+}

@@ -1,0 +1,2 @@
+# This repository must be served through its Node server. Avoid exposing source or secrets via Laragon/Apache.
+Require all denied

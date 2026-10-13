@@ -1,0 +1,9 @@
+[Unit]
+Description=Dunnio daily aggregate archive
+Requires=docker.service
+After=docker.service
+
+[Service]
+Type=oneshot
+WorkingDirectory=/opt/dunnio/deployment
+ExecStart=/usr/bin/docker compose exec -T app node scripts/touch-maintenance.js

@@ -1,0 +1,2 @@
+'use strict';
+document.getElementById('settings').addEventListener('submit',async event=>{event.preventDefault();const button=event.currentTarget.querySelector('button');button.disabled=true;try{await window.dunnioSettings.save({project:document.getElementById('project').value,token:document.getElementById('token').value});}catch{document.getElementById('status').textContent='Chưa lưu được. Kiểm tra Project ID, token và trạng thái Keychain.';}finally{button.disabled=false;}});

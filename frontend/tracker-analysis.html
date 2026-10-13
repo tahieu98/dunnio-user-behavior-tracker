@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="vi">
+<head>
+ <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+ <meta name="robots" content="noindex,nofollow"><title>Dunnio Insights · Phân tích hành vi</title>
+ <link rel="stylesheet" href="css/insights.css"><script src="js/insights.js" defer></script>
+</head>
+<body>
+ <a class="skip" href="#workspace">Đến nội dung phân tích</a>
+ <aside class="rail">
+  <a class="brand" href="tracker-analysis.html"><span class="brand-symbol">D</span><span>DUNNIO<small>BEHAVIOR INSIGHTS</small></span></a>
+  <div class="rail-label">WORKSPACE</div>
+  <nav aria-label="Điều hướng chính">
+   <a class="active" href="#workspace"><span>▦</span> Heatmap & so sánh</a>
+   <a href="#regions"><span>☷</span> Vùng nội dung</a>
+   <a href="#improvements"><span>↗</span> Đề xuất cải thiện</a>
+   <a href="#setup"><span>⌘</span> Cài đặt tracking</a>
+   <a href="dashboard.html"><span>□</span> Quản trị trang & CTA</a>
+  </nav>
+  <div class="rail-guide"><span class="eyebrow">TỪ DỮ LIỆU ĐẾN NỘI DUNG</span><p>Hiểu nơi khách hàng chạm.<br>Đo hành động tiếp theo.</p><a href="https://learn.microsoft.com/en-us/clarity/heatmaps/heatmaps-overview" target="_blank" rel="noopener">Tham khảo Clarity ↗</a></div>
+  <div class="rail-foot"><span class="avatar">DT</span><div id="identity">Dunnio team<small>Dev · Content editor</small></div><button id="logout" title="Đăng xuất" aria-label="Đăng xuất">↪</button></div>
+ </aside>
+ <div class="shell">
+  <header class="topbar"><span>Phân tích website <span class="muted">/</span> <strong id="siteLabel">Dunnio Tailor</strong></span><span class="source-pill" id="sourceLabel">Đang kết nối</span></header>
+  <main id="workspace">
+   <div class="heading"><div><div class="eyebrow">CONTENT PERFORMANCE</div><h1>Phân tích toàn website.</h1><p>Chọn mọi trang công khai, xem lưu lượng Clarity và đối chiếu tương tác theo tháng.</p></div><button id="export" class="button" disabled>↓ Xuất CSV</button></div>
+   <div id="demoBanner" class="banner" hidden><strong>Chế độ minh họa</strong> · Số liệu giả lập tháng 08–09/2026. Ảnh trang tham chiếu hiện tại không đại diện bố cục lịch sử. <a href="tracker-analysis.html">Chuyển sang dữ liệu thật →</a></div>
+   <div id="message" role="status" aria-live="polite"></div>
+   <section class="filters card" aria-label="Bộ lọc báo cáo">
+    <label>Website<select id="site"></select></label>
+    <label>Nhóm trang<select id="pageType"><option value="all">Tất cả nhóm trang</option><option value="home">Trang chủ</option><option value="blog-category">Danh mục blog</option><option value="blog-article">Bài blog</option><option value="product-category">Danh mục sản phẩm</option><option value="product">Sản phẩm</option><option value="service">Dịch vụ / thiết kế</option><option value="other">Trang khác</option></select></label>
+    <label>Tìm tiêu đề / URL<input id="pageSearch" type="search" placeholder="Ví dụ: wedding, /blog/"></label>
+    <label class="page-filter">Trang phân tích<select id="page"></select></label>
+    <label>Nguồn heatmap<select id="dataSource"><option value="measured">Tracker · tọa độ thực tế</option><option value="archive">Clarity · PNG/CSV đã xuất</option></select></label>
+    <label>Thiết bị<select id="device"><option value="desktop">Desktop</option><option value="mobile">Mobile</option><option value="tablet">Tablet</option></select></label>
+    <label>Phiên bản A · chiều rộng<select id="layout"></select></label>
+    <label>Phiên bản B · chiều rộng<select id="layoutB"></select></label>
+    <div class="periods"><label>Từ ngày A<input type="date" id="startA" required></label><span>–</span><label>Đến ngày A<input type="date" id="endA" required></label><span>↔</span><label>Từ ngày B<input type="date" id="startB" required></label><span>–</span><label>Đến ngày B<input type="date" id="endB" required></label><button class="button primary" id="apply">So sánh</button></div>
+   </section>
+   <section class="card catalog-card" id="pageCatalog">
+    <div class="section-heading"><h2>Danh sách trang & lưu lượng Clarity</h2><p id="clarityWindow">Đang đọc dữ liệu đã đồng bộ…</p></div>
+    <div class="catalog-actions"><label>Khoảng API<select id="clarityDays"><option value="1">24 giờ gần nhất</option><option value="2">48 giờ gần nhất</option><option value="3">72 giờ gần nhất</option></select></label><button class="button" id="refreshClarity">Đồng bộ Clarity</button><button class="button" id="discoverPages">Cập nhật sitemap</button><a class="button" id="openClarity" href="https://clarity.microsoft.com/" target="_blank" rel="noopener">Mở Heatmaps Clarity ↗</a></div>
+    <p class="catalog-note" id="pageCount"></p><div class="table-wrap" tabindex="0" role="region" aria-label="Bảng dữ liệu có thể cuộn"><table><thead><tr><th>Trang / URL</th><th>Nhóm</th><th>Phiên Clarity</th><th>Cuộn TB</th><th>Thao tác</th></tr></thead><tbody id="pageRows"></tbody></table></div>
+    <div class="catalog-actions"><button class="button" id="previousPages">← Trước</button><span id="pagePagination"></span><button class="button" id="nextPages">Sau →</button></div>
+    <details><summary>Toàn bộ trường API của trang đang chọn & đối chiếu các bản đã lưu</summary><p id="apiFieldsNote"></p><div class="catalog-actions"><label>Bản API A<select id="exportA"></select></label><label>Bản API B<select id="exportB"></select></label><label>Thiết bị API<select id="apiDevice"><option value="all">Mọi thiết bị</option><option value="desktop">Desktop</option><option value="mobile">Mobile</option><option value="tablet">Tablet</option></select></label><button class="button" id="compareExports">Đối chiếu API</button></div><p id="exportWindowNotice"></p><div class="table-wrap" tabindex="0" role="region" aria-label="Bảng dữ liệu có thể cuộn"><table><thead><tr><th>Metric / trường dữ liệu</th><th>URL / thiết bị</th><th>A</th><th>B</th><th>Δ A − B</th></tr></thead><tbody id="apiMetricRows"></tbody></table></div></details>
+   </section>
+   <div class="catalog-actions"><button class="button" id="capturePage">Chụp lại trang hiện tại</button><a id="selectedPageLink" target="_blank" rel="noopener">Xem trang gốc ↗</a><span id="selectedPagePath" class="muted"></span></div>
+   <div id="dataNotice" class="banner" role="status" hidden></div>
+   <section class="metrics" id="metrics" aria-label="Tổng quan"><div class="card stat"><span>Lượt xem trang</span><strong>—</strong></div><div class="card stat"><span>Lượt chạm</span><strong>—</strong></div><div class="card stat"><span>Hành động được xác nhận</span><strong>—</strong></div><div class="card stat"><span>Tỷ lệ chạm → hành động</span><strong>—</strong></div></section>
+   <section class="analysis-card card" id="heatmapPanels">
+    <div class="analysis-toolbar"><div class="tabs" role="group" aria-label="Chỉ số heatmap"><button class="selected" data-metric="clicks">Điểm chạm</button><button data-metric="actions">Hành động</button><button data-metric="delta">Chênh lệch A − B</button></div><div class="view-controls"><label><input type="checkbox" id="gridToggle" checked> Lưới tọa độ</label><label><input type="checkbox" id="syncToggle" checked> Cuộn đồng bộ</label></div></div>
+    <div class="analysis-subbar"><label>Cường độ <select id="normalization"><option value="rate">Trên 100 lượt xem</option><option value="count">Số lượt thực tế</option></select></label><label>Phóng to<select id="zoom"><option value="1">Vừa khung</option><option value="1.5">150%</option><option value="2.5">250%</option><option value="3.5">350%</option></select></label><span class="legend" id="legend"><i></i> Ít <span class="gradient"></span> Nhiều</span><span class="muted" id="scaleCaption">12 cột · hàng 50 px · cùng thang màu</span></div>
+    <div class="panels"><article class="map-panel"><header><div><span class="period-tag">A</span><strong id="periodA">—</strong></div><small id="mapStatsA">—</small></header><div class="map-scroll" id="scrollA"><div class="map-content" id="mapA"></div></div><footer id="coverageA">Chưa tải dữ liệu</footer></article><article class="map-panel"><header><div><span class="period-tag secondary">B</span><strong id="periodB">—</strong></div><small id="mapStatsB">—</small></header><div class="map-scroll" id="scrollB"><div class="map-content" id="mapB"></div></div><footer id="coverageB">Chưa tải dữ liệu</footer></article></div>
+    <div class="analysis-foot" id="sampleWarning">Chọn ô lưới để xem chi tiết. Phím mũi tên di chuyển; Enter chọn ô.</div>
+   </section>
+   <section class="lower-grid"><article class="card table-card" id="regions"><div class="section-heading"><div class="eyebrow">WHAT CHANGED</div><h2>Vùng nội dung đáng chú ý</h2><p>So sánh số lượt và tỷ lệ; ưu tiên vùng có bằng chứng tương tác.</p></div><div class="table-wrap" tabindex="0" role="region" aria-label="Bảng dữ liệu có thể cuộn"><table><thead><tr><th>Vùng nội dung</th><th>Chạm A / B</th><th>Δ / 100 xem</th><th>Hành động A / B</th></tr></thead><tbody id="regionRows"><tr><td colspan="4">Chưa có dữ liệu</td></tr></tbody></table></div><div class="scroll-summary" id="scrollSummary"></div></article>
+    <aside class="card detail-card" id="cellDetails"><div class="eyebrow">CELL INSPECTOR</div><h2 id="cellTitle">Khám phá một điểm chạm</h2><div id="cellBody"><p>Chọn ô trên heatmap hoặc điểm nóng bên dưới để xem tọa độ, phần nội dung và hành động.</p></div><div id="hotspots" class="hotspots"></div></aside></section>
+   <section class="card notes-card" id="improvements"><div class="section-heading"><div class="eyebrow">EDITOR → DEVELOPER</div><h2>Đề xuất cải thiện nội dung</h2><p>Gắn đề xuất với ô, thiết bị, phiên bản và hai tháng đã phân tích.</p></div><form id="noteForm"><label for="noteText">Đề xuất tại ô đang chọn</label><textarea id="noteText" maxlength="2000" placeholder="Ví dụ: làm rõ nhãn CTA dẫn đến trang thiết kế suit; đo lại tỷ lệ điều hướng ở tháng sau." required></textarea><button class="button primary" id="saveNote" disabled>Lưu đề xuất</button></form><div id="notes"></div></section>
+   <section class="card setup-card" id="setup"><div class="section-heading"><div class="eyebrow">MEASUREMENT SETUP</div><h2>Kết nối website của bạn</h2><p>Script chỉ bắt đầu sau consent. Dùng data-track-region và data-track-key để gắn tên vùng ổn định.</p></div><div class="setup-grid"><div><pre id="installCode"></pre><button class="button" id="copyInstall">Sao chép script</button></div><div><h3>Đọc số liệu đúng cách</h3><p>Hành động: trang mục tiêu đã mở, form báo thành công hoặc trình thiết kế đã khởi chạy. Tín hiệu xác nhận từ trình duyệt, chưa phải đơn hàng đã kiểm chứng.</p><p>Đối chiếu cùng thiết bị, phiên bản và chiều rộng. Tỷ lệ thấp trên mẫu nhỏ chưa đủ để kết luận hiệu quả nội dung.</p><div class="clarity-box"><strong id="clarityLabel">Clarity · chưa kiểm tra</strong><p>Chỉ nhập dữ liệu tổng hợp đối chiếu; heatmap dùng tracker có tọa độ thật.</p><button class="button" id="syncClarity">Lấy dữ liệu tổng hợp 1 ngày</button></div></div></div>
+    <details id="archiveSetup"><summary>Nhập heatmap lịch sử từ Clarity · PNG và CSV</summary><p>Trong Clarity: chọn URL, tháng, thiết bị và Click/Tap → Download PNG/CSV. Xuất riêng mỗi tháng; Compare không hỗ trợ download. PNG giữ hình và màu điểm chạm gốc. CSV đối chiếu lượt theo selector; không chuyển selector thành tọa độ trên ảnh hiện tại.</p><form id="archiveForm" class="archive-form"><label>Tháng trong bộ lọc Clarity<input name="month" type="month" required></label><label>Thiết bị của bản xuất<select name="device"><option value="desktop">Desktop</option><option value="mobile">Mobile</option><option value="tablet">Tablet</option></select></label><label>Heatmap PNG<input name="pngFile" type="file" accept="image/png,.png" required></label><label>CSV click map (tùy chọn)<input name="csvFile" type="file" accept="text/csv,.csv"></label><label>Page views trong Clarity (nếu có)<input name="pageviews" type="number" min="0" max="2147483647"></label><label>Taps / clicks trong Clarity (nếu có)<input name="clicks" type="number" min="0" max="2147483647"></label><label class="archive-confirm"><input name="confirmed" type="checkbox" required> Tôi xác nhận file có đúng URL đang chọn, tháng, thiết bị và bộ lọc Click/Tap.</label><button class="button primary" type="submit">Lưu bản xuất cho trang đang chọn</button></form></details>
+    <details><summary>Thêm website / trang phân tích</summary><div class="setup-grid"><form id="siteForm"><h3>Website mới (Admin)</h3><label>Tên<input name="name" required maxlength="120"></label><label>Origin HTTPS<input name="origin" type="url" placeholder="https://example.com" required></label><label>Đường dẫn mục tiêu (mỗi dòng một đường dẫn)<textarea name="goalPaths" placeholder="/products/custom-suit"></textarea></label><button class="button" type="submit">Đăng ký website</button></form><form id="pageForm"><h3>Trang mới (Admin / Dev)</h3><label>URL trang<input name="url" type="url" required></label><label>Tiêu đề<input name="title" maxlength="255" required></label><label>Nhóm nội dung<input name="category" value="blog" required></label><button class="button" type="submit">Đăng ký trang</button></form></div></details>
+   </section>
+   <footer class="page-footer">DUNNIO INSIGHTS <span>Múi giờ Việt Nam · Clarity / tracker · v1.3.2</span></footer>
+  </main>
+ </div>
+</body></html>

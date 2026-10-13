@@ -1,0 +1,7 @@
+backend/node_modules
+.local
+dist
+test-results
+backend/.env
+deployment/.env
+**/*.partial

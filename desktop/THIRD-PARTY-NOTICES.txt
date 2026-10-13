@@ -1,0 +1,15 @@
+Dunnio Insights Desktop 1.3.2
+
+The portable distribution includes these third-party components:
+- Node.js 24.19.0, upstream Node.js and bundled dependency licenses in NODE-LICENSE.txt.
+  Source: https://github.com/nodejs/node
+- MySQL Community Server/client utilities 8.4.3, MySQL GPL/license material in MYSQL-LICENSE.txt and mysql-notices/.
+  Source distributions: https://dev.mysql.com/downloads/mysql/8.4.html (select Source Code), https://github.com/mysql/mysql-server/tree/mysql-8.4.3
+- npm production libraries, with their license files/package metadata included under app/backend/node_modules/.
+- Playwright Core (Microsoft, Apache-2.0) is included as a production dependency for public-page snapshots, using the installed Microsoft Edge. Its LICENSE and NOTICE are under app/backend/node_modules/playwright-core/.
+- Native launcher source: source/launcher/. Application JavaScript source: app/backend/src/, app/frontend/, app/tracker/.
+
+Microsoft Edge and Microsoft .NET Framework are Windows prerequisites, not redistributed in this portable archive.
+Microsoft Visual C++ 2015-2022 x64 Redistributable installer is included unchanged from https://aka.ms/vs/17/release/vc_redist.x64.exe. Its Microsoft Authenticode signature is verified during the build. It is executed only if the Windows runtime prerequisite is missing/outdated, using its own installation/license UI.
+License terms: https://visualstudio.microsoft.com/license-terms/vs2022-cruntime/
+This executable is built locally and is not Authenticode-signed. No certificate or trusted-publisher identity is claimed.

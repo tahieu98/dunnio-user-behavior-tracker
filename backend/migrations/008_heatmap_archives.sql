@@ -1,0 +1,21 @@
+CREATE TABLE IF NOT EXISTS heatmap_archives (
+ id INT PRIMARY KEY AUTO_INCREMENT,
+ site_id INT NOT NULL,
+ page_path VARCHAR(255) NOT NULL,
+ device VARCHAR(12) NOT NULL,
+ period_month CHAR(7) NOT NULL,
+ viewport_width INT NOT NULL,
+ document_height INT NOT NULL,
+ image_path VARCHAR(255) NOT NULL,
+ pageviews INT NULL,
+ clicks INT NULL,
+ selector_counts JSON NULL,
+ export_name VARCHAR(255) NOT NULL,
+ sha256 CHAR(64) NOT NULL,
+ created_by INT NOT NULL,
+ created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+ FOREIGN KEY (site_id) REFERENCES tracking_sites(id),
+ FOREIGN KEY (created_by) REFERENCES users(id),
+ UNIQUE KEY uk_archive_file (site_id,page_path,device,period_month,sha256),
+ INDEX idx_archive_cohort (site_id,page_path,device,period_month)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;

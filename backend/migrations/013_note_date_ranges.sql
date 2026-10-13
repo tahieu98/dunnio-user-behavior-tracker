@@ -1,0 +1,2 @@
+ALTER TABLE behavior_notes MODIFY COLUMN period_a VARCHAR(21) NOT NULL;
+ALTER TABLE behavior_notes MODIFY COLUMN period_b VARCHAR(21) NOT NULL;

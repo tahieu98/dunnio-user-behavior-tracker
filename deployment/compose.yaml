@@ -1,0 +1,69 @@
+services:
+  db:
+    image: mysql:8.4
+    restart: unless-stopped
+    environment:
+      MYSQL_DATABASE: dunnio_touch
+      MYSQL_USER: dunnio
+      MYSQL_PASSWORD: ${DB_PASSWORD:?Set DB_PASSWORD}
+      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD:?Set DB_ROOT_PASSWORD}
+    command: ["--innodb-buffer-pool-size=1073741824", "--max-connections=50", "--default-time-zone=+00:00"]
+    volumes:
+      - database:/var/lib/mysql
+    mem_limit: 1600m
+    healthcheck:
+      test: ["CMD-SHELL", "MYSQL_PWD=$$MYSQL_PASSWORD mysqladmin ping -h127.0.0.1 -u$$MYSQL_USER --silent"]
+      interval: 10s
+      timeout: 5s
+      retries: 20
+    networks: [private]
+  app:
+    build:
+      context: ..
+      dockerfile: deployment/Dockerfile
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      DB_HOST: db
+      DB_PORT: 3306
+      DB_NAME: dunnio_touch
+      DB_USER: dunnio
+      DB_PASSWORD: ${DB_PASSWORD:?Set DB_PASSWORD}
+      JWT_SECRET: ${JWT_SECRET:?Set JWT_SECRET}
+      CORS_ORIGIN: https://${APP_DOMAIN:?Set APP_DOMAIN}
+      ENABLE_DEMO: "false"
+      TRUST_PROXY_HOPS: "1"
+      TOUCH_INGEST_LIMIT: ${TOUCH_INGEST_LIMIT:-120}
+      NODE_OPTIONS: --max-old-space-size=512
+    command: ["sh", "-c", "node src/migrate.js && exec node src/index.js"]
+    volumes:
+      - assets:/var/lib/dunnio
+    mem_limit: 1600m
+    healthcheck:
+      test: ["CMD", "node", "-e", "fetch('http://127.0.0.1:3000/api/health').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+    networks: [private]
+  proxy:
+    image: caddy:2
+    restart: unless-stopped
+    depends_on: [app]
+    environment:
+      APP_DOMAIN: ${APP_DOMAIN:?Set APP_DOMAIN}
+    ports: ["80:80", "443:443", "443:443/udp"]
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - certificates:/data
+      - proxy_config:/config
+    mem_limit: 128m
+    networks: [private]
+volumes:
+  database:
+  assets:
+  certificates:
+  proxy_config:
+networks:
+  private:

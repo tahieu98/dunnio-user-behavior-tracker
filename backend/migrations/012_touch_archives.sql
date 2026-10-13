@@ -1,0 +1,6 @@
+CREATE TABLE IF NOT EXISTS touch_archive_restores (
+ archive_id CHAR(64) CHARACTER SET ascii COLLATE ascii_bin PRIMARY KEY,
+ payload_sha256 CHAR(64) CHARACTER SET ascii NOT NULL,
+ event_date DATE NOT NULL,
+ restored_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;

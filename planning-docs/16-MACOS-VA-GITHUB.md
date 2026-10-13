@@ -34,6 +34,6 @@ Preview dùng ad-hoc signature, chưa có Developer ID/notarization. Keychain c�
 - Kiểm tra chữ ký: `codesign --verify --deep --strict` trên gói `.app`.
 - Gói DMG/ZIP và SHA256SUMS được tạo riêng mỗi kiến trúc. Release chỉ chạy khi cả hai job thành công.
 - Workflow: https://github.com/tahieu98/dunnio-user-behavior-tracker/actions/runs/38331068571. Commit ứng dụng được build: `ddca8536f411e2dece00d5f655d2f45b1b78dace`.
-- Release dự kiến của workflow: https://github.com/tahieu98/dunnio-user-behavior-tracker/releases/tag/v1.5.0-macos-preview. Chỉ coi đã phát hành khi workflow release job thành công và assets hiện trên trang này.
+- Release đã xuất bản: https://github.com/tahieu98/dunnio-user-behavior-tracker/releases/tag/v1.5.0-macos-preview. Cả hai job native và release job đều success; có 4 DMG/ZIP và 2 file SHA256SUMS. Hai kiến trúc đều báo `touchUI`, `clarityUI`, `backup`, `reopen`, `runtimeClean`, `dataRetained` và `forceQuitStopsGuardianAndChildren` thành công.
 
 Publication audit: 183 file source lúc import đã được kiểm tra với credentials Windows đang dùng; không có match. `.local`, `dist`, node_modules, .env thật, settings.protected/settings.keychain, khóa ký và SQL backup nằm ngoài Git. Repository có package locks và hướng dẫn build; binary được đưa lên Releases, không vào lịch sử Git.

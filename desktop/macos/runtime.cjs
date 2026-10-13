@@ -55,8 +55,9 @@ class Runtime {
    else if(this.database&&!this.children.get(this.database).done){const p=spawn(path.join(this.resources,'vendor/mysql/bin/mysqladmin'),['--no-defaults','--host=127.0.0.1','--port='+this.dbPort,'--user=root','shutdown'],{env:{...this.env(),MYSQL_PWD:this.settings.MYSQL_ROOT_PASSWORD},stdio:'ignore'});await Promise.race([new Promise(r=>{p.once('exit',r);p.once('error',r);}),delay(10000)]);if(p.exitCode===null)p.kill('SIGKILL');}
   }catch{}
   const deadline=Date.now()+30000;while([...this.children.values()].some(s=>!s.done)&&Date.now()<deadline)await delay(100);
-  // The worker owns one dedicated POSIX group, including headless Chromium.
-  // Signal live child handles here; the guardian terminates its entire group.
+  // The backend shutdown above cancels Playwright (which owns its own browser
+  // process group). Signal live service handles here; the guardian terminates
+  // the worker's dedicated POSIX group as the final service fallback.
   for(const [child,s] of this.children){if(!s.done)child.kill('SIGTERM');}
   await delay(300);for(const [child,s] of this.children){if(!s.done)child.kill('SIGKILL');}
   await delay(300);if(this.socketRoot)fs.rmSync(this.socketRoot,{recursive:true,force:true});this.notify({type:'stopped'});

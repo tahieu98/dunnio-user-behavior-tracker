@@ -8,7 +8,8 @@ if(smoke&&!testArg)throw new Error('Smoke test requires an isolated --test-data-
 const root=smoke&&testArg?path.resolve(testArg.slice('--test-data-dir='.length)):path.join(os.homedir(),'Library/Application Support/Dunnio Insights');
 const instance=crypto.randomUUID(),run=path.join(root,'runtime',instance);
 fs.mkdirSync(run,{recursive:true,mode:0o700});
-app.setPath('userData',root);app.setPath('sessionData',path.join(run,'browser'));app.setName('Dunnio Insights');
+for(const name of ['browser','crash-dumps','logs'])fs.mkdirSync(path.join(run,name),{mode:0o700});
+app.setPath('userData',root);app.setPath('sessionData',path.join(run,'browser'));app.setPath('crashDumps',path.join(run,'crash-dumps'));app.setAppLogsPath(path.join(run,'logs'));app.setName('Dunnio Insights');
 let window,configuration,worker,settings,base,ready=false,quitting=false,shutdownPromise,workerStopped,stopResolve;
 const pending=new Map();let sequence=0;
 if(!app.requestSingleInstanceLock()){security.removeSession(root,run);app.exit(0);}
